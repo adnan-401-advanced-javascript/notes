@@ -10,26 +10,39 @@ jest.mock("minimist"); // eslint-disable-line
   describe("Input Module", () => {
 
   it("test getAction()", () => {
-    minimist.mockImplementationOnce(() => ({ a: "ahmed" }));
+    minimist.mockImplementationOnce(() => ({ a: "ahmed", category: "school" }));
     const input = new Input();
     expect(input.getAction()).toEqual("add");
   });
 
-  // eslint-disable-next-line
-  it("getPayload()", ()=> {
-    minimist.mockImplementationOnce(() => ({ a: "ahmed" }));
-    const input = new Input();
-    expect(input.getPayload()).toEqual("ahmed");
-  });
-
-  it("test getAction()", () => {
-    minimist.mockImplementationOnce(() => ({ a: "ahmed" }));
+  it("test Add getAction()", () => {
+    minimist.mockImplementationOnce(() => ({ a: "ahmed", category: "school" }));
     const input = new Input();
     expect(input.getAction()).toEqual("add");
+  });
+
+  it("test Add getPayload()", ()=> {
+    minimist.mockImplementationOnce(() => ({ a: "ahmed", category: "school" }));
+    const input = new Input();
+    expect(input.getPayload()).toEqual({ text: "ahmed", category: "school" });
+  });
+
+  it("test list action()", ()=> {
+    minimist.mockImplementationOnce(() => ({ list: true }));
+    const input = new Input();
+    expect(input.getAction()).toEqual("list");
+    expect(input.getPayload()).toEqual(true);
+  });
+
+  it("test delete action()", ()=> {
+    minimist.mockImplementationOnce(() => ({ delete: "id" }));
+    const input = new Input();
+    expect(input.getAction()).toEqual("delete");
+    expect(input.getPayload()).toEqual("id");
   });
 
   it("test an isValid()", () => {
-    minimist.mockImplementationOnce(() => ({ a: "ahmed" }));
+    minimist.mockImplementationOnce(() => ({ a: "ahmed", category: "school" }));
     const input = new Input();
     expect(input.isValid()).toBeTruthy();
   });
@@ -39,6 +52,7 @@ jest.mock("minimist"); // eslint-disable-line
     const input = new Input();
     expect(input.isValid()).toBeFalsy();
   });
+
 
   it("test no input data", () => {
     const input = new Input();
