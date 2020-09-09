@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const mongoose = require("mongoose");
 
 require("dotenv").config();
