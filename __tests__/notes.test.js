@@ -1,68 +1,86 @@
-const Note = require("../lib/model/notes");
+const Notes = require("../lib/model/notes-collection");
 
-jest.spyOn(global.console, 'log');
-jest.spyOn(global.console, 'error');
+require("@code-fellows/supergoose");
 
 // eslint-disable-next-line
   describe("Note Module", () => {
 
-  const validData = {
-    action: "add",
-    payload: { text: "adnan5", category: "schoool" },
-  };
+  it("test create()", () => {
+    const obj = { text: "note", category: "school" };
+    return Notes.create(obj)
+      .then((record) => {
+        Object.keys(obj).forEach((key) => {
+          expect(record[key]).toEqual(obj[key]); // must bbe identical
+        });
+      });
+  });
 
-
-  it("test valid executeAdd()",() => {
-    const note = new Note();
-    note.execute(validData.action, validData.payload);
-    expect(console.log).toHaveBeenCalled();
+  it("test get()", () => {
+    const obj = { text: "", category: "" };
+    return Notes.get({})
+      .then((record) => {
+        Object.keys(obj).forEach((key) => {
+          expect(Object.keys(record).includes(key)); // just keys are constraints
+        });
+      });
   });
 
 
-  const inValidData = {
-    action: "non",
-    payload: null,
-  };
+  it("test get({ _id })", () => {
+    const obj = { text: "note", category: "school" };
+    return Notes.create(obj)
+      .then((record) => {
+        return Notes.get({ _id: record._id})
+          .then((recordData) => {
+            Object.keys(obj).forEach((key) => {
+              expect(recordData[key]).toEqual(obj[key]); // must be indentical
+            });
+          });
+      });
+  });
 
-it("testinValid executeAdd()", () => {
-    const note = new Note();
-    note.execute(inValidData.action);
-    expect(console.error).toHaveBeenCalled();
+  it("test get({ category })", () => {
+    const obj = { text: "note", category: "school" };
+    return Notes.create(obj)
+      .then((record) => {
+        return Notes.get({ category: record.category })
+          .then((results) => {
+            results.forEach((recordData) => {
+              expect(recordData.category).toEqual(obj.category); // must bbe identical
+            })
+          });
+      });
   });
 
 
-  const deleteData = {
-    action: "delete",
-    payload: "id",
-  };
-
-  it("test valid delete()", () => {
-    const note = new Note();
-    note.execute(deleteData.action, deleteData.payload);
-    expect(console.log).toHaveBeenCalled();
+  it("test update()", () => {
+    const obj = { text: "note", category: "school" };
+    return Notes.create(obj)
+      .then((record) => {
+        return Notes.update(record._id, obj)
+          .then((updated) => {  // updated return the old values!!!!!
+            return Notes.get({ _id: record._id})
+              .then((recordData) => {
+                Object.keys(obj).forEach((key) => {
+                  expect(recordData[key]).toEqual(obj[key]); // must be indentical
+                });
+              });
+          });
+      });
   });
 
-  const listData = {
-    action: "list",
-    payload: true,
-  };
-
-  it("test valid list()", () => {
-    const note = new Note();
-    note.execute(listData.action, listData.payload);
-    expect(console.log).toHaveBeenCalled();
-  });
-
-
-  const listCategoryData = {
-    action: "list",
-    payload: "school",
-  };
-
-  it("test valid list(category)", () => {
-    const note = new Note();
-    note.execute(listCategoryData.action, listCategoryData.payload);
-    expect(console.log).toHaveBeenCalled();
+  it("test delete()", () => {
+    const obj = { text: "note", category: "school" };
+    return Notes.create(obj)
+      .then((record) => {
+        return Notes.delete(record._id)
+          .then(() => {
+            return Notes.get({ _id: record._id})
+              .then((recordData) => {
+                expect(recordData).toBe(null);
+              });
+          });
+      });
   });
 
 });
