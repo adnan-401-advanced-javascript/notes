@@ -15,9 +15,12 @@ const Note = require("./lib/model/notes");
 const Input = require("./lib/input");
 
 const input = new Input();
-const action = input.getAction();
-const payload = input.getPayload();
 
-const ourNotes = new Note();
+if (input.isValid()) {
+  const action = input.getAction();
+  const payload = input.getPayload();
 
-ourNotes.execute(action, payload);
+  const ourNotes = new Note();
+
+  ourNotes.execute(action, payload);
+}
